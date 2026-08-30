@@ -10,7 +10,7 @@
 | Diane Chege      | @TBD          |  |
 | Grace Petrov     | @TBD          |  |
 | Sahed Saad       | @sahed-saad |  |
-| Maria Larson     | @TBD          |  |
+| Maria Larson     | @Mlars290          |  |
 | Fiona Herzog     | @TBD          |  |
 | Francis Adom     | @TBD          |  |
 
