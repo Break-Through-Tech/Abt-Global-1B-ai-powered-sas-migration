@@ -1,121 +1,93 @@
-# AI Studio Challenge Project Title
-
-> 💡 **Note for the team:** This is just a template. Update the above title with your AI Studio Challenge Project name. Remove all guidance notes and example text in this template and populate this README with your own content. You can work on this README throughout AI Studio, and get feedback from your AI Studio Coach and Challenge Advisor before finalizing it.  
+# AI-Powered SAS Migration
 
 ---
 
 ### 👥 **Team Members**
 
-**Example:**
-
 | Name             | GitHub Handle | Contribution                                                             |
 |------------------|---------------|--------------------------------------------------------------------------|
-| Taylor Nguyen    | @taylornguyen | Data exploration, visualization, overall project coordination            |
-| Jordan Ramirez   | @jramirez     | Data collection, exploratory data analysis (EDA), dataset documentation  |
-| Amina Hassan     | @aminahassan  | Data preprocessing, feature engineering, data validation                 |
-| Priya Mehta      | @pmehta       | Model selection, hyperparameter tuning, model training and optimization  |
-| Chris Park       | @chrispark    | Model evaluation, performance analysis, results interpretation           |
+| Christa Kulanda  | @TBD          |  |
+| Diane Chege      | @TBD          |  |
+| Grace Petrov     | @TBD          |  |
+| Sahed Saad       | @sahed-saad |  |
+| Maria Larson     | @TBD          |  |
+| Fiona Herzog     | @TBD          |  |
+| Francis Adom     | @TBD          |  |
 
 ---
 
 ## 🎯 **Project Highlights**
 
-**Example:**
-
-- Developed a machine learning model using `[model type/technique]` to address `[challenge project task]`.
-- Achieved `[key metric or result]`, demonstrating `[value or impact]` for `[host company]`.
-- Generated actionable insights to inform business decisions at `[host company or stakeholders]`.
-- Implemented `[specific methodology]` to address industry constraints or expectations.
+- Building an LLM-based system to translate legacy SAS data pipelines into Python for Abt Global.
+- Targeting an end-to-end migration of a real-world SAS pipeline used to generate CMS's Overall Hospital Quality Star Ratings.
+- Validating translated Python outputs against original SAS outputs using row-count, column-level, and statistic comparisons.
+- Auto-generating documentation of the underlying data processing logic to preserve institutional knowledge during modernization.
 
 ---
 
 ## 👩🏽‍💻 **Setup and Installation**
 
-**Provide step-by-step instructions so someone else can run your code and reproduce your results. Depending on your setup, include:**
+*We're just getting started this month (September), this section will be filled in as our environment comes together. For now:*
 
-* How to clone the repository
-* How to install dependencies
-* How to set up the environment
-* How to access the dataset(s)
-* How to run the notebook or scripts
+* Clone the repository: `git clone https://github.com/Break-Through-Tech/Abt-Global-1B-ai-powered-sas-migration.git`
+* Install dependencies once `requirements.txt` is populated: `pip install -r requirements.txt`
+* Set up a Python environment
 
 ---
 
 ## 🏗️ **Project Overview**
 
-**Describe:**
+This project is part of Break Through Tech's Fall 2026 AI Studio program, in partnership with our host company, **Abt Global**, a research, technical assistance, and evaluation organization working in public health, education, and international development.
 
-- How this project is connected to the Break Through Tech AI Program
-- Your AI Studio host company and the project objective and scope
-- The real-world significance of the problem and the potential impact of your work
+Our challenge is to explore how agentic AI and large language models can help modernize legacy analytics workflows. Many organizations, including public agencies like the Centers for Medicare & Medicaid Services (CMS), still rely on costly SAS systems. Migrating these to Python is typically a very manual and slow process that involves: code translation, testing, validation, and documentation.
+
+Our goal is to build an LLM-based agentic system that automates as much of this migration as possible, translating SAS code into Python, validating that outputs match, flagging discrepancies, and generating documentation of the underlying data logic. We'll evaluate our system against a real SAS pipeline used to calculate CMS's Overall Hospital Quality Star Ratings. A successful outcome reduces manual migration effort while preserving accuracy and business knowledge for organizations moving off SAS.
 
 ---
 
 ## 📊 **Data Exploration**
 
-**You might consider describing the following (as applicable):**
-
-* The dataset(s) used: origin, format, size, type of data
-* Data exploration and preprocessing approaches
-* Insights from your Exploratory Data Analysis (EDA)
-* Challenges and assumptions when working with the dataset(s)
-
-**Potential visualizations to include:**
-
-* Plots, charts, heatmaps, feature visualizations, sample dataset images
+* **Dataset:** SAS programs, datasets, and logs from the [CMS Overall Hospital Quality Star Rating SAS package](https://qualitynet.cms.gov/inpatient/public-reporting/overall-ratings/software), under 1GB total
+* **Format:** Legacy SAS programs and datasets, provided in both `.sas7bdat` and `.csv` formats, plus a SAS log file and HTML procedure output
+* **Contents:** Four SAS programs, one input dataset, and ten output datasets covering measure averages, national averages, and outcome/process/patient-experience scores
+* **This month's focus:** Reviewing SAS code structure and macro logic, exploring the input/output datasets, and setting up our Python environment for reading SAS files
 
 ---
 
 ## 🧠 **Model Development**
 
-**You might consider describing the following (as applicable):**
-
-* Model(s) used (e.g., CNN with transfer learning, regression models)
-* Feature selection and Hyperparameter tuning strategies
-* Training setup (e.g., % of data for training/validation, evaluation metric, baseline performance)
-
+*Development hasn't started yet, this is our September to October milestone.* 
 
 ---
 
 ## 📈 **Results & Key Findings**
 
-**You might consider describing the following (as applicable):**
-
-* Performance metrics (e.g., Accuracy, F1 score, RMSE)
-* How your model performed
-* Insights from evaluating model fairness
-
-**Potential visualizations to include:**
-
-* Confusion matrix, precision-recall curve, feature importance plot, prediction distribution, outputs from fairness or explainability tools
+*No results yet, our team is in the setup and data exploration phase for September. We'll document validation metrics and execution results here once our translation module is built and tested.*
 
 ---
 
 ## 🚀 **Next Steps**
-
-**You might consider addressing the following (as applicable):**
-
-* What are some of the limitations of your model?
-* What would you do differently with more time/resources?
-* What additional datasets or techniques would you explore?
+| Month | Milestone | Key Activities |
+|---|---|---|
+| **September** | Data Exploration & Setup | Explore SAS code structures, parse sample datasets, set up development environments. |
+| **October** | Core System Development | Build translation modules, execution pipelines, and validation logic. |
+| **November** | End-to-End Pipeline Migration | Apply system to the 4-program CMS pipeline, execute end-to-end translation, validate, document, and prepare final demo. |
 
 ---
 
 ## 📝 **License**
 
-Specify how your project can be used by others. Choose an appropriate license and link it here (e.g., MIT, Apache 2.0). Make sure your Challenge Advisor approves of the selected license type. 
-
-**Example:**
 This project is licensed under the MIT License.
 
 ---
 
-## 📄 **References** (Optional but encouraged)
+## 📄 **References**
 
-Cite relevant papers, articles, or resources that supported your project.
+* [CMS Overall Hospital Quality Star Rating Software Package](https://qualitynet.cms.gov/inpatient/public-reporting/overall-ratings/software)
+* [GitHub Projects Documentation](https://docs.github.com/en/issues/planning-and-tracking-with-projects/learning-about-projects/about-projects)
 
 ---
 
-## 🙏 **Acknowledgements** (Optional but encouraged)
+## 🙏 **Acknowledgements**
 
-Thank your Challenge Advisor, host company representatives, TA, and others who supported your project.
+Thank you to our Challenge Advisor, **Anita Nti**, and our AI Studio Coach, **Nagalakshmi Pulivarthi**, for their guidance and support on this project.
