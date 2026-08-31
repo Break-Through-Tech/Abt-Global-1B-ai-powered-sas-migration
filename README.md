@@ -6,7 +6,7 @@
 
 | Name             | GitHub Handle | Contribution                                                             |
 |------------------|---------------|--------------------------------------------------------------------------|
-| Christa Kulanda  | @TBD          |  |
+| Christa Kulanda  | @cmkulanda |  |
 | Diane Chege      | @TBD          |  |
 | Grace Petrov     | @TBD          |  |
 | Sahed Saad       | @sahed-saad |  |
