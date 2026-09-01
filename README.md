@@ -7,7 +7,7 @@
 | Name             | GitHub Handle | Contribution                                                             |
 |------------------|---------------|--------------------------------------------------------------------------|
 | Christa Kulanda  | @cmkulanda |  |
-| Diane Chege      | @TBD          |  |
+| Diane Chege      | @dianecheg          |  |
 | Grace Petrov     | @gpetrov2024          |  |
 | Sahed Saad       | @sahed-saad |  |
 | Maria Larson     | @Mlars290          |  |
