@@ -8,7 +8,7 @@
 |------------------|---------------|--------------------------------------------------------------------------|
 | Christa Kulanda  | @cmkulanda |  |
 | Diane Chege      | @TBD          |  |
-| Grace Petrov     | @TBD          |  |
+| Grace Petrov     | @gpetrov2024          |  |
 | Sahed Saad       | @sahed-saad |  |
 | Maria Larson     | @Mlars290          |  |
 | Fiona Herzog     | @TBD          |  |
