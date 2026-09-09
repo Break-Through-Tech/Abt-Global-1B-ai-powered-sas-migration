@@ -11,7 +11,7 @@
 | Grace Petrov     | @gpetrov2024          |  |
 | Sahed Saad       | @sahed-saad |  |
 | Maria Larson     | @Mlars290          |  |
-| Fiona Herzog     | @TBD          |  |
+| Fiona Herzog     | @fiherzog          |  |
 | Francis Adom     | @TBD          |  |
 
 ---
