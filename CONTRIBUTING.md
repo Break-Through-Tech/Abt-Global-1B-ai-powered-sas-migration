@@ -15,20 +15,20 @@
 - Briefly describe what the PR does and reference the related Issue (e.g. "Closes #19").
 - Assign at least two other teammates to review and test the PR before merging.
 - Don't merge your own PR without a review.
-- In the PR, note which AI model and prompt you used (if any) and what you changed by hand.
+- In the PR, note which AI model and prompt you used (if any) and what you changed by hand. See `ai/README.md` for our AI guidelines and checklist.
 
 ## PR review checklist
 Reviewers, check that:
 - Row counts match the SAS output.
 - Missing values are handled the way SAS handles them.
 - Numeric results match the SAS output within a small tolerance for rounding.
-- The code runs from a fresh install of `requirements.txt`.
+- The code runs after a fresh `uv sync`.
 
 ## Environment and dependencies
-- We use `requirements.txt` as the list of what we need, and `uv` to install it (`uv pip install -r requirements.txt`).
+- We use `uv`. The dependencies are listed in `pyproject.toml`, and exact versions are locked in `uv.lock`.
+- After you pull, run `uv sync` to install everything.
+- To add a new library, run `uv add <library>`, then commit both `pyproject.toml` and `uv.lock`.
 - We're not using Docker for now.
-- If you install a new library, add it to `requirements.txt`.
-- Avoid pinning old versions. Use the package name alone or a recent version.
 
 ## Issues and the Project board
 - Every task has a GitHub Issue linked to the October Milestone.
