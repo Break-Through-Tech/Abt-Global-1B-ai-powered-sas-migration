@@ -1,1 +1,8 @@
-
+   pandas
+   numpy
+   scipy
+   scikit-learn
+   pyreadstat
+   matplotlib
+   pytest
+   datacompy
