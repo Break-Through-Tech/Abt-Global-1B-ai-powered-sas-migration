@@ -108,10 +108,18 @@ def run_program_0(raw_data: pd.DataFrame) -> Program0Result:
     # keep_hos is Christa's translation of %keep_hos (PR #24)
     filtered = keep_hos(initial_data, measure_in, len(measure_in)).reset_index(drop=True)
 
-    mean_std = compute_mean_std(filtered, measure_in)
+    # SAS lines 294–297: PROC MEANS
+    mean_std = calculate_measure_statistics(filtered, measure_in)
+    
+    # SAS lines 305–307: PROC STANDARD
     standardized = standardize_measures(filtered, measure_in)
-    reversed_df = apply_direction_reversal(standardized, measure_in)
-    analysis_dataset = build_analysis_dataset(reversed_df, measure_in)
+    
+    # SAS lines 312–358: Reverse measure direction
+    reversed_df = redirect_measures(standardized, measure_in)
+    
+    # SAS lines 363–373: Create final analysis dataset
+    analysis_dataset = create_analysis_output(reversed_df, measure_in)
+
 
     return Program0Result(
         analysis_dataset=analysis_dataset,
@@ -129,3 +137,46 @@ def write_outputs(result: Program0Result, out_dir) -> None:
     out_dir.mkdir(parents=True, exist_ok=True)
     result.analysis_dataset.to_csv(out_dir / "STD_DATA_2025JUL_ANALYSIS.csv", index=False)
     result.mean_std.to_csv(out_dir / "MEASURE_AVERAGE_STDDEV_2025JUL.csv", index_label="_STAT_")
+
+
+# ============================================================
+# SAS Program 0 Translation: Lines 290–375
+# ============================================================
+
+
+def calculate_measure_statistics(df, measure_in):
+    """
+    SAS lines 294–297: PROC MEANS
+
+    Calculates the count, minimum, maximum, mean,
+    and standard deviation of each included measure.
+    """
+
+    # Reuse the existing PROC MEANS translation.
+    return compute_mean_std(df, measure_in)
+
+
+def redirect_measures(df, measure_in):
+    """
+    SAS lines 312–358: DATA step
+
+    Reverses the sign of measures where lower
+    values indicate better hospital performance.
+    """
+
+    # Reuse the existing negative-direction measure list
+    # and sign-reversal function.
+    return apply_direction_reversal(df, measure_in)
+
+
+def create_analysis_output(df, measure_in):
+    """
+    SAS lines 363–373: DATA step with arrays
+
+    Creates standardized measure columns with the
+    std_ prefix and removes the original columns.
+    """
+
+    # Reuse the existing SAS array translation.
+    return build_analysis_dataset(df, measure_in)
+
