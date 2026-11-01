@@ -24,6 +24,11 @@ Reviewers, check that:
 - Numeric results match the SAS output within a small tolerance for rounding.
 - The code runs after a fresh `uv sync`.
 
+## Where files go
+- Put translated Python code in `src/`, with one folder per program.
+- Put tests in `tests/`, with one folder per program.
+- Don't edit or overwrite the SAS input and output files. Those are our answer key.
+
 ## Environment and dependencies
 - We use `uv`. The dependencies are listed in `pyproject.toml`, and exact versions are locked in `uv.lock`.
 - After you pull, run `uv sync` to install everything.
@@ -31,11 +36,11 @@ Reviewers, check that:
 - We're not using Docker for now.
 
 ## Issues and the Project board
-- Every task has a GitHub Issue linked to the October Milestone.
+- Every task has a GitHub Issue linked to the current Milestone.
 - Move your Issue across the board (Backlog, Ready, In progress, In review, Done) as you work on it.
 
 ## Project-specific rules
-- Don't edit or overwrite files in `data/Project_1`. The SAS outputs are our answer key for validation.
+- Don't edit or overwrite the SAS input and output files. They are our answer key for validation.
 - Never commit API keys or passwords. Keep them in a `.env` file, which is ignored by Git.
 
 ## Decision log
