@@ -1,0 +1,38 @@
+# AI Use & Cross-Reference Checklist
+
+## Before Asking AI
+
+- [ ] Do I have the original SAS/code/source logic?
+- [ ] Do I have the relevant project requirements?
+- [ ] Have I provided enough context?
+- [ ] Am I asking AI to reproduce the existing logic rather than redesign it?
+
+## After AI Generates Code
+
+- [ ] Did I compare variables?
+- [ ] Did I compare conditions?
+- [ ] Did I check exclusions?
+- [ ] Did I check missing-value behavior?
+- [ ] Did I check thresholds?
+- [ ] Did I ask the model to explain its reasoning?
+
+## Cross-Reference
+
+- [ ] Did I use a different model when practical?
+- [ ] Did I provide the original source and generated code?
+- [ ] Did I ask for specific mismatches?
+- [ ] Did I investigate disagreements instead of choosing the answer I preferred?
+
+## Validation
+
+- [ ] Did I run the code?
+- [ ] Did I compare the output against the expected/SAS output?
+- [ ] Did I test relevant edge cases?
+- [ ] Has a team member reviewed important changes?
+
+## Before Committing
+
+- [ ] Is the code understandable?
+- [ ] Are important AI-assisted decisions documented?
+- [ ] Does the implementation still match the original requirements?
+- [ ] Am I confident because the work was tested and reviewed, rather than simply because AI said it was correct?
