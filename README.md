@@ -6,13 +6,13 @@
 
 | Name             | GitHub Handle | Contribution                                                             |
 |------------------|---------------|--------------------------------------------------------------------------|
-| Christa Kulanda  | @cmkulanda |  |
-| Diane Chege      | @dianecheg          |  |
-| Grace Petrov     | @gpetrov2024          |  |
-| Sahed Saad       | @sahed-saad |  |
-| Maria Larson     | @Mlars290          |  |
-| Fiona Herzog     | @fiherzog          |  |
-| Francis Adom     | @TBD          |  |
+| Christa Kulanda  | @cmkulanda    | Star Macro: translated and tested Program 0 helper functions |
+| Diane Chege      | @dianecheg    | Prompt Engineer: wrote AI guidelines and built the prompt library |
+| Grace Petrov     | @gpetrov2024  | Program 1: translating and validating |
+| Sahed Saad       | @sahed-saad   | Program 2: built the loader, summary score, and tests |
+| Maria Larson     | @Mlars290     | Documentation Lead: set up uv and the PR review process; managed the project board |
+| Fiona Herzog     | @fiherzog     | Program 0: translated and validated against SAS output |
+| Francis Adom     | @TBD          | K-means helper functions (role TBD) |
 
 ---
 
@@ -27,11 +27,12 @@
 
 ## 👩🏽‍💻 **Setup and Installation**
 
-*We're just getting started this month (September), this section will be filled in as our environment comes together. For now:*
+We use uv to manage our Python environment. Dependencies are listed in `pyproject.toml`, and `uv.lock` pins the exact versions. We are not using Docker.
 
 * Clone the repository: `git clone https://github.com/Break-Through-Tech/Abt-Global-1B-ai-powered-sas-migration.git`
-* Install dependencies once `requirements.txt` is populated: `pip install -r requirements.txt`
-* Set up a Python environment
+* Install dependencies: `uv sync`
+* Add a new library: `uv add <library>`
+* Before pushing code, read [CONTRIBUTING.md](CONTRIBUTING.md). Team decisions are logged in [DECISIONS.md](DECISIONS.md).
 
 ---
 
@@ -50,19 +51,21 @@ Our goal is to build an LLM-based agentic system that automates as much of this 
 * **Dataset:** SAS programs, datasets, and logs from the [CMS Overall Hospital Quality Star Rating SAS package](https://qualitynet.cms.gov/inpatient/public-reporting/overall-ratings/software), under 1GB total
 * **Format:** Legacy SAS programs and datasets, provided in both `.sas7bdat` and `.csv` formats, plus a SAS log file and HTML procedure output
 * **Contents:** Four SAS programs, one input dataset, and ten output datasets covering measure averages, national averages, and outcome/process/patient-experience scores
-* **This month's focus:** Reviewing SAS code structure and macro logic, exploring the input/output datasets, and setting up our Python environment for reading SAS files
+* **What we did:** Reviewed the SAS code structure and macro logic, and explored the input and output datasets with pandas.
 
 ---
 
 ## 🧠 **Model Development**
 
-*Development hasn't started yet, this is our September to October milestone.* 
+We translate the SAS programs into Python with help from large language models, then check every result against the SAS output. Each pull request notes the model and prompt used, and our AI guidelines are in the `ai/` folder. Results are validated with `pytest` and `datacompy`.
 
 ---
 
 ## 📈 **Results & Key Findings**
 
-*No results yet, our team is in the setup and data exploration phase for September. We'll document validation metrics and execution results here once our translation module is built and tested.*
+* Program 0 is translated, merged, and validated against the SAS output.
+* The Program 2 loader, test folders, and summary score calculation are merged.
+* Program 1 and the remaining Program 2 helper functions are in progress.
 
 ---
 
@@ -71,7 +74,7 @@ Our goal is to build an LLM-based agentic system that automates as much of this 
 |---|---|---|
 | **September** | Data Exploration & Setup | Explore SAS code structures, parse sample datasets, set up development environments. |
 | **October** | Core System Development | Build translation modules, execution pipelines, and validation logic. |
-| **November** | End-to-End Pipeline Migration | Apply system to the 4-program CMS pipeline, execute end-to-end translation, validate, document, and prepare final demo. |
+| **November** | End-to-End Pipeline Migration | Finalize and test Programs 0 to 2 with validation, finish helper functions, finalize AI guidelines and docs, and prepare the final presentation. |
 
 ---
 
