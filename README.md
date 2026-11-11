@@ -12,7 +12,7 @@
 | Sahed Saad       | @sahed-saad   | Program 2: built the loader, summary score, and tests |
 | Maria Larson     | @Mlars290     | Documentation Lead: set up uv and the PR review process; managed the project board |
 | Fiona Herzog     | @fiherzog     | Program 0: translated and validated against SAS output |
-| Francis Adom     | @TBD          | K-means helper functions (role TBD) |
+| Francis Adom     | @IngFrancis   | K-means helper functions (role TBD) |
 
 ---
 
