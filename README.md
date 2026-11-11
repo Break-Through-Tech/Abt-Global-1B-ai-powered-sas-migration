@@ -12,7 +12,7 @@
 | Sahed Saad       | [@sahed-saad](https://github.com/sahed-saad)   | Program 2: built the loader, summary score, and tests |
 | Maria Larson     | [@Mlars290](https://github.com/Mlars290)   | Documentation Lead: set up uv and the PR review process; managed the project board |
 | Fiona Herzog     | [@fiherzog ](https://github.com/fiherzog)    | Program 0: translated and validated against SAS output |
-| Francis Adom     | [@IngFrancis](https://github.com/IngFrancis) | K-means helper functions (role TBD) |
+| Francis Adom     | [@IngFrancis](https://github.com/IngFrancis) | Group-score and national-average helper translations with SAS validation (Issue #30) |
 
 ---
 
