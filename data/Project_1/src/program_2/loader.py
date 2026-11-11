@@ -1,3 +1,4 @@
+from collections.abc import Iterable
 from pathlib import Path
 import pandas as pd
 
@@ -29,22 +30,21 @@ def read_scores(filename: str, new_name: str) -> pd.DataFrame:
 
 
 def load_and_merge_domain_data() -> pd.DataFrame:
+    """Load the five SAS domain-score CSVs and merge them by provider."""
+    return merge_domain_scores(read_scores(filename, name) for filename, name in DOMAINS)
+
+
+def merge_domain_scores(domain_scores: Iterable[pd.DataFrame]) -> pd.DataFrame:
     """Build one table: one row per PROVIDER_ID, one column per domain score.
 
     SAS equivalent:  data all; merge <5 tables>; by PROVIDER_ID; run;
     A SAS merge with BY and no IN= flags is a full outer join: a provider is
     kept if it is in ANY table. Missing scores become NaN (SAS '.').
     """
-    df = None
-    for filename, new_name in DOMAINS:
-        scores = read_scores(filename, new_name)
-        if df is None:
-            # First table gives the starting rows (PROVIDER_ID) + 1 score column
-            df = scores
-        else:
-            # Each merge matches rows on PROVIDER_ID and ADDS one score column.
-            # how="outer" keeps providers that are missing from either side.
-            df = df.merge(scores, on="PROVIDER_ID", how="outer")
+    scores = iter(domain_scores)
+    df = next(scores)
+    for domain in scores:
+        df = df.merge(domain, on="PROVIDER_ID", how="outer")
 
     # SAS output is ordered by PROVIDER_ID (BY statement), so sort the same way
     return df.sort_values("PROVIDER_ID").reset_index(drop=True)
