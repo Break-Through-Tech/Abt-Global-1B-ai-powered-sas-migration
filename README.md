@@ -6,7 +6,7 @@
 
 | Name             | GitHub Handle | Contribution                                                             |
 |------------------|---------------|--------------------------------------------------------------------------|
-| Christa Kulanda  | [@cmkulanda ](https://github.com/cmkulanda)   | Star Macro: translated and tested Program 0 helper functions |
+| Christa Kulanda  | [@cmkulanda ](https://github.com/cmkulanda)   | Star Macro & Program 0: translated and tested helper functions |
 | Diane Chege      | [@dianecheg ](https://github.com/dianecheg)  | Prompt Engineer: wrote AI guidelines and built the prompt library |
 | Grace Petrov     | [@gpetrov2024](https://github.com/gpetrov2024)| Program 1: translating and validating |
 | Sahed Saad       | [@sahed-saad](https://github.com/sahed-saad)   | Program 2: built the loader, summary score, and tests |
