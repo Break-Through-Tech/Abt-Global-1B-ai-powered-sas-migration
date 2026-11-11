@@ -6,13 +6,13 @@
 
 | Name             | GitHub Handle | Contribution                                                             |
 |------------------|---------------|--------------------------------------------------------------------------|
-| Christa Kulanda  | @cmkulanda    | Star Macro: translated and tested Program 0 helper functions |
-| Diane Chege      | @dianecheg    | Prompt Engineer: wrote AI guidelines and built the prompt library |
-| Grace Petrov     | @gpetrov2024  | Program 1: translating and validating |
-| Sahed Saad       | @sahed-saad   | Program 2: built the loader, summary score, and tests |
-| Maria Larson     | @Mlars290     | Documentation Lead: set up uv and the PR review process; managed the project board |
-| Fiona Herzog     | @fiherzog     | Program 0: translated and validated against SAS output |
-| Francis Adom     | @IngFrancis   | K-means helper functions (role TBD) |
+| Christa Kulanda  | [@cmkuland ](https://github.com/cmkulanda)   | Star Macro: translated and tested Program 0 helper functions |
+| Diane Chege      | [@dianecheg ](https://github.com/dianecheg)  | Prompt Engineer: wrote AI guidelines and built the prompt library |
+| Grace Petrov     | [@gpetrov2024](https://github.com/gpetrov2024)| Program 1: translating and validating |
+| Sahed Saad       | [@sahed-saad](https://github.com/sahed-saad)   | Program 2: built the loader, summary score, and tests |
+| Maria Larson     | [@Mlars290](https://github.com/Mlars290)   | Documentation Lead: set up uv and the PR review process; managed the project board |
+| Fiona Herzog     | [@fiherzog ](https://github.com/fiherzog)    | Program 0: translated and validated against SAS output |
+| Francis Adom     | [@IngFrancis](https://github.com/IngFrancis) | K-means helper functions (role TBD) |
 
 ---
 
