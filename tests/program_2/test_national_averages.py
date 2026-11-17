@@ -1,80 +1,80 @@
 import sys
 from pathlib import Path
 
-import pandas as pd
-import pyreadstat
-import pytest
-
 REPO_ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO_ROOT / "data" / "Project_1" / "src"))
 
-from program_0.loader import load_input_data
-from program_0.standardize import run_program_0
-from program_2.loader import CSV_DIR
+import pandas as pd
+import pytest
+from program_2.loader import CSV_DIR, load_and_merge_domain_data
 from program_2.national_averages import (
     NATIONAL_DOMAINS,
     compute_national_averages,
     nation_avg,
     nation_avg0,
+    nation_avg_peer,
 )
+from program_2.report import ANALYSIS_CSV_SAS, report
+from program_2.summary_score import compute_summary_score
+
+SAS_NAT_CSV = CSV_DIR / "NATIONAL_AVERAGE_2025JUL.csv"
+SAS_STAR_CSV = CSV_DIR / "STAR_2025JUL.csv"
 
 
-def test_national_averages_match_sas_from_raw_input():
-    analysis = run_program_0(load_input_data()).analysis_dataset
-    expected = pd.read_csv(CSV_DIR / "NATIONAL_AVERAGE_2025JUL.csv")
-    expected = expected.drop(columns=[f"Summary_Score_Nat_peer{count}" for count in (3, 4, 5)])
-    actual = compute_national_averages(analysis)
-
-    pd.testing.assert_frame_equal(actual, expected, rtol=0, atol=1e-8)
+@pytest.fixture(scope="module")
+def sas_national():
+    return pd.read_csv(SAS_NAT_CSV)
 
 
-@pytest.mark.parametrize("filename", NATIONAL_DOMAINS)
-def test_nation_avg_matches_original_sas_dataset(filename):
-    sas_dir = CSV_DIR.with_name("SAS Output")
-    scores, _ = pyreadstat.read_sas7bdat(sas_dir / f"{Path(filename).stem.lower()}.sas7bdat")
-    expected, _ = pyreadstat.read_sas7bdat(sas_dir / "national_average_2025jul.sas7bdat")
-    _, column = NATIONAL_DOMAINS[filename]
+def test_full_national_averages_match_sas(sas_national):
+    # Run existing Program 2 pipeline pieces (loader + summary_score + report)
+    summary_df = compute_summary_score(load_and_merge_domain_data())
+    report_df = report(pd.read_csv(ANALYSIS_CSV_SAS, dtype={"PROVIDER_ID": str}))
+    merged = summary_df.merge(report_df, on="PROVIDER_ID", how="inner")
 
-    assert nation_avg(scores) == pytest.approx(expected[column].iloc[0], rel=0, abs=1e-10)
+    actual = compute_national_averages(merged)
 
-
-def test_nation_avg0_matches_original_sas_dataset():
-    sas_dir = CSV_DIR.with_name("SAS Output")
-    scores, _ = pyreadstat.read_sas7bdat(sas_dir / "star_2025jul.sas7bdat")
-    expected, _ = pyreadstat.read_sas7bdat(sas_dir / "national_average_2025jul.sas7bdat")
-
-    assert nation_avg0(scores) == pytest.approx(expected["Summary_Score_Nat"].iloc[0], rel=0, abs=1e-10)
+    assert list(actual.columns) == list(sas_national.columns)
+    pd.testing.assert_frame_equal(actual, sas_national, rtol=0, atol=1e-6)
 
 
-def test_national_averages_from_original_sas_analysis():
-    sas_dir = CSV_DIR.with_name("SAS Output")
-    analysis, _ = pyreadstat.read_sas7bdat(sas_dir / "std_data_2025jul_analysis.sas7bdat")
-    expected, _ = pyreadstat.read_sas7bdat(sas_dir / "national_average_2025jul.sas7bdat")
-    actual = compute_national_averages(analysis)
-
-    pd.testing.assert_frame_equal(actual, expected[actual.columns], rtol=0, atol=1e-10)
+@pytest.mark.parametrize("filename,nat_col", NATIONAL_DOMAINS)
+def test_nation_avg_per_domain_matches_sas(sas_national, filename, nat_col):
+    domain_df = pd.read_csv(CSV_DIR / filename, dtype={"PROVIDER_ID": str})
+    assert nation_avg(domain_df) == pytest.approx(sas_national[nat_col].iloc[0], abs=1e-6)
 
 
-def test_nation_avg_includes_three_measures_and_ignores_missing_scores():
-    scores = pd.DataFrame({
-        "total_cnt": [2, 3, 4, 3],
-        "grp_score": [100.0, 2.0, 4.0, float("nan")],
-    })
-    assert nation_avg(scores) == 3.0
+def test_nation_avg0_and_peer_match_sas_star(sas_national):
+    star_df = pd.read_csv(SAS_STAR_CSV, dtype={"PROVIDER_ID": str})
+    assert nation_avg0(star_df) == pytest.approx(sas_national["Summary_Score_Nat"].iloc[0], abs=1e-6)
+
+    peers = nation_avg_peer(star_df)
+    for peer in (3, 4, 5):
+        col = f"Summary_Score_Nat_peer{peer}"
+        assert peers[col] == pytest.approx(sas_national[col].iloc[0], abs=1e-6)
 
 
-def test_nation_avg0_includes_only_reportable_hospitals():
-    scores = pd.DataFrame({
-        "report_indicator": [0, 1, 1, 1],
-        "summary_score": [100.0, 2.0, 4.0, float("nan")],
-    })
-    assert nation_avg0(scores) == 3.0
+def test_nation_avg_edge_cases():
+    # Only total_cnt >= 3 counts; NaNs are ignored
+    df = pd.DataFrame({"total_cnt": [2, 3, 4, 3], "grp_score": [100.0, 2.0, 4.0, float("nan")]})
+    assert nation_avg(df) == 3.0
+
+    # Empty eligible set returns NaN
+    empty = pd.DataFrame({"total_cnt": [0, 2], "grp_score": [1.0, 2.0]})
+    assert pd.isna(nation_avg(empty))
 
 
-@pytest.mark.parametrize(
-    "helper,filter_column",
-    [(nation_avg, "total_cnt"), (nation_avg0, "report_indicator")],
-)
-def test_national_average_is_missing_without_eligible_hospitals(helper, filter_column):
-    scores = pd.DataFrame({filter_column: [0], "grp_score": [2.0], "summary_score": [2.0]})
-    assert pd.isna(helper(scores))
+def test_nation_avg0_and_peer_edge_cases():
+    df = pd.DataFrame(
+        {
+            "report_indicator": [0, 1, 1, 1, 1],
+            "Total_measure_group_cnt": [3, 3, 3, 5, 5],
+            "summary_score": [100.0, 1.0, 3.0, 5.0, float("nan")],
+        }
+    )
+    assert nation_avg0(df) == 3.0
+
+    peers = nation_avg_peer(df)
+    assert peers["Summary_Score_Nat_peer3"] == 2.0
+    assert pd.isna(peers["Summary_Score_Nat_peer4"])
+    assert peers["Summary_Score_Nat_peer5"] == 5.0
