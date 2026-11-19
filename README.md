@@ -65,7 +65,8 @@ We translate the SAS programs into Python with help from large language models, 
 
 * Program 0 is translated, merged, and validated against the SAS output.
 * The Program 2 loader, test folders, and summary score calculation are merged.
-* Program 1 and the remaining Program 2 helper functions are in progress.
+* Program 1 is translated and validated against the SAS output for all five group tables (see `docs/program1/validation.md`).
+* The remaining Program 2 helper functions are in progress.
 
 ---
 
