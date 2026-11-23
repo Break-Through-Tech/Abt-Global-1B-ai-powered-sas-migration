@@ -1,0 +1,98 @@
+@import "@fontsource/sofia-sans/400.css";
+@import "@fontsource/sofia-sans/600.css";
+@import "@fontsource/sofia-sans/700.css";
+@import "@fontsource/sofia-sans/800.css";
+@import "tailwindcss";
+
+/* Abt Global brand tokens, read from abtglobal.com computed styles */
+@theme {
+  --font-sans: "Sofia Sans", Arial, Helvetica, sans-serif;
+
+  --color-abt-red: #bb2127;       /* primary CTA, active nav, focus */
+  --color-abt-red-dark: #961a1f;  /* hover, error text */
+  --color-abt-red-tint: #faeeee;  /* selected rows, error ground */
+  --color-abt-rose: #e5abae;      /* text selection */
+  --color-ink: #1a1a1a;           /* data, primary text, dark buttons */
+  --color-charcoal: #1e1e1e;      /* app shell and footer */
+  --color-shell-text: #b3b3b3;    /* secondary text on charcoal */
+  --color-heading: #5a5a5a;       /* Abt section headings */
+  --color-body: #4d4d4d;
+  --color-muted: #666666;
+  --color-line: #d9d9d9;
+  --color-line-soft: #ebebeb;
+  --color-surface: #f5f5f5;       /* second neutral layer: toolbars, table heads */
+
+  --color-pass: #17703f;
+  --color-pass-tint: #e9f4ed;
+  --color-info: #1f4e79;
+  --color-info-tint: #ebf2f8;
+  --color-warn: #6b4600;
+  --color-warn-tint: #fff5e0;
+
+  --radius-control: 5px;          /* Abt button radius */
+}
+
+@layer base {
+  html {
+    color: var(--color-body);
+    background: #fff;
+    -webkit-font-smoothing: antialiased;
+    accent-color: var(--color-abt-red);
+    caret-color: var(--color-abt-red);
+    scrollbar-color: #c4c4c4 transparent;
+  }
+  body {
+    min-height: 100vh;
+  }
+  ::selection {
+    background: var(--color-abt-rose);
+    color: var(--color-ink);
+  }
+  h1, h2, h3 {
+    font-weight: 700;
+    text-wrap: balance;
+  }
+  a {
+    text-underline-offset: 3px;
+    text-decoration-thickness: 1px;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-abt-red);
+    outline-offset: 2px;
+  }
+  .tabular {
+    font-variant-numeric: tabular-nums lining-nums;
+  }
+}
+
+/* Reduced motion keeps state changes visible: loaders stop moving but stay on screen,
+   color and opacity transitions remain (they are not vestibular triggers). */
+@media (prefers-reduced-motion: reduce) {
+  .animate-spin, .animate-pulse {
+    animation: none;
+  }
+  .motion-transform {
+    transition-property: color, background-color, border-color, opacity;
+  }
+}
+
+@media print {
+  @page {
+    size: letter;
+    margin: 14mm 14mm 16mm;
+  }
+  html {
+    font-size: 12px;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+  .print-break {
+    break-before: page;
+  }
+  .print-keep {
+    break-inside: avoid;
+  }
+  thead {
+    display: table-header-group;
+  }
+}

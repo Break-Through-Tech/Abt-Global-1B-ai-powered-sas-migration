@@ -1,0 +1,21 @@
+# One-command local deployment: docker compose up --build
+services:
+  star-ratings-studio:
+    build:
+      context: .
+      args:
+        GIT_SHA: ${GIT_SHA:-local}
+    image: star-ratings-studio:latest
+    environment:
+      # Optional: shown as a tag in the header (leave empty or "production" to hide)
+      APP_ENVIRONMENT: ${APP_ENVIRONMENT:-}
+      # Optional: support address shown in the footer and help pages
+      SUPPORT_EMAIL: ${SUPPORT_EMAIL:-}
+    ports:
+      - "8000:8000"
+    volumes:
+      - runs:/srv/runs
+    restart: unless-stopped
+
+volumes:
+  runs:

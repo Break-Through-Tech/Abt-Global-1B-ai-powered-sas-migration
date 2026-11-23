@@ -12,3 +12,14 @@ dependencies = [
     "scikit-learn>=1.9.1",
     "scipy>=1.18.1",
 ]
+
+[dependency-groups]
+app = [
+    "fastapi>=0.165.0",
+    "httpx2>=2.16.2",
+    "python-multipart>=0.0.34",
+    "uvicorn>=0.54.0",
+]
+dev = [
+    "ipykernel>=7.4.0",
+]
