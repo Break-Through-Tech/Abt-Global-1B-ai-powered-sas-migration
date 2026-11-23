@@ -1,0 +1,12 @@
+.git
+.venv
+**/__pycache__
+**/node_modules
+app/frontend/dist
+data/Project_1/SAS Output CSV
+data/Project_1/Python Output CSV
+data/Project_1/*.pdf
+data/Project_1/Starrating/*.sas7bdat
+**/*.ipynb
+.env
+app/runs
