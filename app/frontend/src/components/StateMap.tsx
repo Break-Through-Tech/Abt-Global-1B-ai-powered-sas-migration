@@ -66,11 +66,14 @@ function step(v: number, cuts: number[]): number {
   return i;
 }
 
-export function StateMap({ states, metric, compact = false, interactive = true }: {
+export function StateMap({ states, metric, compact = false, interactive = true, selected = null, onSelect }: {
   states: StateStats[];
   metric: MapMetric;
   compact?: boolean;
   interactive?: boolean;
+  /** With onSelect, tiles act as toggle buttons that filter the rest of the dashboard. */
+  selected?: string | null;
+  onSelect?: (state: string | null) => void;
 }) {
   const [hover, setHover] = useState<string | null>(null);
   const byState = Object.fromEntries(states.map((s) => [s.state, s]));
@@ -117,7 +120,23 @@ export function StateMap({ states, metric, compact = false, interactive = true }
             );
             return (
               <li key={code} style={{ gridColumn: col + 1, gridRow: row + 1, background: bg }}>
-                {interactive && s ? (
+                {interactive && s && onSelect ? (
+                  <button
+                    type="button"
+                    aria-pressed={selected === code}
+                    aria-label={label}
+                    onClick={() => onSelect(selected === code ? null : code)}
+                    onMouseEnter={() => setHover(code)}
+                    onMouseLeave={() => setHover(null)}
+                    onFocus={() => setHover(code)}
+                    onBlur={() => setHover(null)}
+                    className={`${tileClass} w-full hover:outline-2 hover:outline-ink focus-visible:outline-offset-1 ${
+                      selected === code ? "outline-[3px] -outline-offset-[3px] outline-ink" : ""
+                    }`}
+                  >
+                    {content}
+                  </button>
+                ) : interactive && s ? (
                   <a
                     href={`#/hospitals?state=${code}`}
                     aria-label={`${label}. Show these hospitals`}
@@ -151,7 +170,7 @@ export function StateMap({ states, metric, compact = false, interactive = true }
                   <dt className="text-muted">Rated 4 or 5 stars</dt><dd className="text-right font-semibold text-ink">{METRICS.shareHigh.format(focus)}</dd>
                   <dt className="text-muted">Hospitals rated</dt><dd className="text-right font-semibold text-ink">{focus.rated} of {focus.hospitals}</dd>
                 </dl>
-                <p className="mt-2 text-[13px] text-abt-red">Select to see these hospitals</p>
+                <p className="mt-2 text-[13px] text-abt-red">{onSelect ? (selected === focus.state ? "Select again to clear the filter" : "Select to filter the dashboard") : "Select to see these hospitals"}</p>
               </>
             )}
           </div>

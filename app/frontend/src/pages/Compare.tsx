@@ -180,7 +180,7 @@ export function ComparePage() {
               </label>
             </div>
 
-            <div tabIndex={0} role="region" aria-label="Table, scrolls sideways on small screens" className="overflow-x-auto">
+            <div tabIndex={0} role="region" aria-label="Table, scrolls sideways on small screens" className="relative overflow-x-auto">
               <table className="w-full min-w-[720px] text-[15px]">
                 <thead className={tableHead}>
                   <tr>
@@ -271,7 +271,7 @@ function Matrix({ data }: { data: Comparison }) {
   const cells = ORDER.flatMap((b) => ORDER.map((t) => (b === "none" && t === "none" ? 0 : data.matrix[b][t])));
   const max = Math.max(1, ...cells);
   return (
-    <div tabIndex={0} role="region" aria-label="Table, scrolls sideways on small screens" className="overflow-x-auto">
+    <div tabIndex={0} role="region" aria-label="Table, scrolls sideways on small screens" className="relative overflow-x-auto">
       <table className="w-full min-w-[440px] border-separate border-spacing-[3px] text-[14px]">
         <caption className="sr-only">Hospitals by earlier rating (rows) and later rating (columns)</caption>
         <thead>

@@ -1,11 +1,15 @@
-import { Check, Download, Mail, X } from "lucide-react";
-import { useEffect } from "react";
+import {
+  BarChart3, BookOpen, Building2, Check, Download, FileText, GitCompare, HelpCircle, Mail, Menu, Play,
+  ShieldCheck, X,
+} from "lucide-react";
+import { useEffect, useRef, useState, type ComponentType } from "react";
 import { api, fmt, type RunSummary } from "./api";
 import { Notice, Skeleton, buttonClass } from "./components/ui";
+import { useMediaQuery } from "./hooks";
 import { ComparePage } from "./pages/Compare";
-import { AccessibilityPage, HelpPage, PrivacyPage } from "./pages/Info";
 import { HospitalDetailPage } from "./pages/HospitalDetail";
 import { HospitalsPage } from "./pages/Hospitals";
+import { AccessibilityPage, HelpPage, PrivacyPage } from "./pages/Info";
 import { MethodologyPage } from "./pages/Methodology";
 import { OverviewPage } from "./pages/Overview";
 import { ReportPage } from "./pages/Report";
@@ -13,27 +17,51 @@ import { RunPage } from "./pages/Run";
 import { ValidationPage } from "./pages/Validation";
 import { useRoute, useRun } from "./state";
 
-const NAV = [
-  { path: "", label: "Ratings" },
-  { path: "hospitals", label: "Hospitals" },
-  { path: "run", label: "Run pipeline" },
-  { path: "compare", label: "Compare" },
-  { path: "validation", label: "SAS parity" },
-  { path: "methodology", label: "Methodology" },
-  { path: "report", label: "Report" },
-  { path: "help", label: "Help" },
+type NavItem = { path: string; label: string; icon: ComponentType<{ className?: string; "aria-hidden"?: boolean }> };
+
+const NAV_GROUPS: { label: string; items: NavItem[] }[] = [
+  {
+    label: "Analyze",
+    items: [
+      { path: "", label: "Ratings", icon: BarChart3 },
+      { path: "hospitals", label: "Hospitals", icon: Building2 },
+      { path: "compare", label: "Compare runs", icon: GitCompare },
+    ],
+  },
+  {
+    label: "Pipeline",
+    items: [
+      { path: "run", label: "Run pipeline", icon: Play },
+      { path: "validation", label: "SAS parity", icon: ShieldCheck },
+    ],
+  },
+  {
+    label: "Reference",
+    items: [
+      { path: "report", label: "Report", icon: FileText },
+      { path: "methodology", label: "Methodology", icon: BookOpen },
+      { path: "help", label: "Help", icon: HelpCircle },
+    ],
+  },
 ];
 
-const INFO_TITLES: Record<string, string> = { accessibility: "Accessibility", privacy: "Data and privacy" };
+const TITLES: Record<string, string> = {
+  ...Object.fromEntries(NAV_GROUPS.flatMap((g) => g.items.map((i) => [i.path, i.label]))),
+  accessibility: "Accessibility",
+  privacy: "Data and privacy",
+};
 
 export default function App() {
   const route = useRoute();
   const { about, run, error, reload } = useRun();
   const section = route[0] ?? "";
+  const wide = useMediaQuery("(min-width: 1280px)");
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
-    const label = route[1] ? `Hospital ${route[1]}` : NAV.find((n) => n.path === section)?.label ?? INFO_TITLES[section] ?? "Not found";
+    const label = route[1] ? `Hospital ${route[1]}` : TITLES[section] ?? "Not found";
     document.title = `${label} | Star Ratings Studio | Abt Global`;
+    setMenuOpen(false);
   }, [route, section]);
 
   let page;
@@ -51,148 +79,204 @@ export default function App() {
   } else if (!run) {
     page = (
       <div aria-busy="true" aria-label="Loading results" className="space-y-6">
-        <Skeleton className="h-11 w-96 max-w-full" />
-        <Skeleton className="h-64" />
+        <Skeleton className="h-9 w-80 max-w-full" />
+        <Skeleton className="h-96" />
       </div>
     );
   } else if (section === "") page = <OverviewPage run={run} />;
   else if (section === "run") page = <RunPage />;
   else if (section === "compare") page = <ComparePage />;
-  else if (section === "hospitals" && route[1]) page = <HospitalDetailPage run={run} ccn={route[1]} />;
-  else if (section === "hospitals") page = <HospitalsPage key={window.location.hash} run={run} />;
+  // Wide screens keep the list and show the hospital beside it; narrow screens get a full page.
+  else if (section === "hospitals" && route[1] && !wide) page = <HospitalDetailPage run={run} ccn={route[1]} />;
+  else if (section === "hospitals") page = <HospitalsPage run={run} selected={route[1] ?? null} />;
   else if (section === "validation") page = <ValidationPage run={run} />;
   else if (section === "methodology") page = <MethodologyPage />;
   else if (section === "report") page = <ReportPage run={run} />;
   else page = <Notice tone="warning" title="This page does not exist"><a className="underline" href="#/">Go to the ratings</a></Notice>;
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:bg-white focus:px-3 focus:py-2 focus:text-ink">
+    <div className="min-h-screen lg:pl-[264px] print:pl-0">
+      <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[60] focus:bg-white focus:px-3 focus:py-2 focus:text-ink">
         Skip to content
       </a>
 
-      <header className="sticky top-0 z-30 bg-charcoal text-white print:hidden">
-        <div className="mx-auto flex max-w-[1280px] items-stretch gap-6 px-4 sm:px-8">
-          <div className="flex shrink-0 items-center gap-3 py-3">
-            <a href="#/" className="flex items-center gap-3">
-              <img src="/abt-logo.svg" alt="" className="size-9" />
-              <span className="leading-none">
-                <span className="block text-[12px] font-semibold tracking-[0.02em] text-shell-text">Abt Global</span>
-                <span className="mt-0.5 block text-[19px] font-bold tracking-[-0.01em]">Star Ratings Studio</span>
-              </span>
-            </a>
-            {about?.environment && (
-              <span
-                title={`This is the ${about.environment} environment, not production`}
-                className="rounded-[3px] border border-[#f0b429] px-1.5 py-0.5 text-[11px] font-bold tracking-[0.06em] text-[#f0b429] uppercase"
-              >
-                {about.environment}
-              </span>
-            )}
-          </div>
-          <nav aria-label="Main" className="-mb-px ml-auto hidden md:flex">
-            <NavLinks section={section} />
-          </nav>
-        </div>
-        <nav aria-label="Main" className="overflow-x-auto border-t border-white/10 md:hidden">
-          <div className="flex px-2"><NavLinks section={section} /></div>
-        </nav>
+      {/* Phone and tablet: top bar with a menu button */}
+      <header className="sticky top-0 z-30 flex items-center justify-between gap-3 bg-charcoal px-4 text-white lg:hidden print:hidden">
+        <Lockup />
+        <button
+          className="inline-flex min-h-11 items-center gap-2 px-2 text-[15px] font-semibold"
+          aria-expanded={menuOpen}
+          aria-controls="sidebar"
+          onClick={() => setMenuOpen(true)}
+        >
+          <Menu aria-hidden className="size-5" /> Menu
+        </button>
       </header>
 
-      {run && <RunContext run={run} />}
+      <Sidebar section={section} run={run} open={menuOpen} onClose={() => setMenuOpen(false)} />
 
-      <main id="main" className="mx-auto w-full max-w-[1280px] flex-1 px-4 pt-10 pb-20 sm:px-8 print:max-w-none print:p-0">{page}</main>
-
-      <footer className="bg-charcoal text-shell-text print:hidden">
-        <div className="mx-auto grid max-w-[1280px] gap-8 px-4 py-10 text-sm sm:px-8 md:grid-cols-[minmax(0,6fr)_minmax(0,3fr)_minmax(0,3fr)]">
-          <div className="flex items-start gap-3">
-            <img src="/abt-logo.svg" alt="Abt Global" className="size-8 shrink-0" />
-            <p className="max-w-[60ch] leading-relaxed">
-              Ratings are reproduced from the CMS Overall Hospital Quality Star Rating methodology with a
-              Python translation of the SAS package. They are not official CMS publications.
-            </p>
-          </div>
-          <nav aria-label="Footer">
-            <ul className="space-y-1">
-              {[["help", "Help and glossary"], ["accessibility", "Accessibility"], ["privacy", "Data and privacy"], ["methodology", "Methodology"]].map(([path, text]) => (
-                <li key={path}>
-                  <a href={`#/${path}`} className="inline-flex min-h-8 items-center text-white underline decoration-white/30 underline-offset-4 hover:decoration-white">{text}</a>
-                </li>
-              ))}
-            </ul>
-          </nav>
-          <div className="space-y-1 leading-relaxed">
-            {about?.supportEmail ? (
-              <a href={`mailto:${about.supportEmail}`} className="inline-flex min-h-8 items-center gap-1.5 text-white underline decoration-white/30 underline-offset-4 hover:decoration-white">
-                <Mail aria-hidden className="size-4" /> {about.supportEmail}
-              </a>
-            ) : (
-              <p>For support, contact your Abt Global project team.</p>
-            )}
-            <p className="tabular">
-              Version {about?.version ?? "–"}
-              {about && <>, pipeline <span className="font-mono">{about.pipelineCommit.slice(0, 7)}</span></>}
-            </p>
-          </div>
-        </div>
-      </footer>
+      <main id="main" className="px-4 pt-7 pb-16 sm:px-6 lg:px-10 print:p-0">{page}</main>
     </div>
   );
 }
 
-/**
- * Persistent provenance strip: which input every number on screen came from,
- * and whether that run reproduces SAS. This is the product's signature: every
- * view is anchored to an auditable run.
- */
-function RunContext({ run }: { run: RunSummary }) {
+function Lockup() {
+  const { about } = useRun();
+  return (
+    <div className="flex items-center gap-3 py-3">
+      <a href="#/" className="flex items-center gap-3">
+        <img src="/abt-logo.svg" alt="" className="size-9" />
+        <span className="leading-none">
+          <span className="block text-[12px] font-semibold tracking-[0.02em] text-shell-text">Abt Global</span>
+          <span className="mt-0.5 block text-[18px] font-bold tracking-[-0.01em]">Star Ratings Studio</span>
+        </span>
+      </a>
+      {about?.environment && (
+        <span
+          title={`This is the ${about.environment} environment, not production`}
+          className="rounded-[3px] border border-[#f0b429] px-1.5 py-0.5 text-[11px] font-bold tracking-[0.06em] text-[#f0b429] uppercase"
+        >
+          {about.environment}
+        </span>
+      )}
+    </div>
+  );
+}
+
+/** Persistent navigation with the run every screen is showing. On small screens it opens as a drawer. */
+function Sidebar({ section, run, open, onClose }: {
+  section: string;
+  run: RunSummary | null;
+  open: boolean;
+  onClose: () => void;
+}) {
+  const { about } = useRun();
+  const closeRef = useRef<HTMLButtonElement>(null);
+  const desktop = useMediaQuery("(min-width: 1024px)");
+
+  useEffect(() => {
+    if (!open) return;
+    closeRef.current?.focus();
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open, onClose]);
+
+  return (
+    <>
+      {open && <div aria-hidden className="fixed inset-0 z-40 bg-black/45 lg:hidden" onClick={onClose} />}
+      <aside
+        id="sidebar"
+        aria-label="Navigation"
+        inert={!open && !desktop}
+        className={`fixed inset-y-0 left-0 z-50 flex w-[264px] flex-col overflow-y-auto bg-charcoal text-white transition-transform duration-200 lg:translate-x-0 print:hidden ${
+          open ? "translate-x-0" : "-translate-x-full"
+        }`}
+      >
+        <div className="flex items-start justify-between px-5 pt-2">
+          <Lockup />
+          <button ref={closeRef} onClick={onClose} aria-label="Close menu" className="mt-3 inline-flex size-11 items-center justify-center lg:hidden">
+            <X aria-hidden className="size-5" />
+          </button>
+        </div>
+
+        {run && <RunPicker run={run} />}
+
+        <nav aria-label="Main" className="mt-4 flex-1 px-3">
+          {NAV_GROUPS.map((group) => (
+            <div key={group.label} className="mb-5">
+              <p className="px-3 pb-1.5 text-[12px] font-semibold text-shell-text">{group.label}</p>
+              <ul>
+                {group.items.map(({ path, label, icon: Icon }) => {
+                  const active = section === path;
+                  return (
+                    <li key={path}>
+                      <a
+                        href={`#/${path}`}
+                        aria-current={active ? "page" : undefined}
+                        className={`flex min-h-10 items-center gap-3 rounded-control px-3 text-[15px] font-semibold transition-colors duration-150 ${
+                          active ? "bg-white/10 text-white shadow-[inset_0_0_0_1px_rgba(255,255,255,0.08)]" : "text-[#d4d4d4] hover:bg-white/5 hover:text-white"
+                        }`}
+                      >
+                        <Icon aria-hidden className={`size-[18px] ${active ? "text-[#ff6b70]" : "text-shell-text"}`} />
+                        {label}
+                      </a>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          ))}
+        </nav>
+
+        <div className="space-y-3 border-t border-white/10 px-6 py-5 text-[13px] leading-relaxed text-shell-text">
+          <p>Reproduced ratings. Not official CMS publications.</p>
+          <ul className="space-y-0.5">
+            <li><a href="#/accessibility" className="inline-flex min-h-6 items-center text-white underline decoration-white/30 underline-offset-4 hover:decoration-white">Accessibility</a></li>
+            <li><a href="#/privacy" className="inline-flex min-h-6 items-center text-white underline decoration-white/30 underline-offset-4 hover:decoration-white">Data and privacy</a></li>
+          </ul>
+          {about?.supportEmail ? (
+            <a href={`mailto:${about.supportEmail}`} className="inline-flex min-h-6 items-center gap-1.5 text-white underline decoration-white/30 underline-offset-4 hover:decoration-white">
+              <Mail aria-hidden className="size-4" /> {about.supportEmail}
+            </a>
+          ) : (
+            <p>Support: your Abt Global project team</p>
+          )}
+          <p className="tabular">
+            Version {about?.version ?? "–"}
+            {about && <span className="block font-mono text-[12px]">pipeline {about.pipelineCommit.slice(0, 7)}</span>}
+          </p>
+        </div>
+      </aside>
+    </>
+  );
+}
+
+/** Which run every number on screen comes from, switchable from anywhere, with its SAS status. */
+function RunPicker({ run }: { run: RunSummary }) {
+  const { setRun } = useRun();
+  const [runs, setRuns] = useState<RunSummary[]>([]);
+
+  useEffect(() => {
+    api.runs().then(setRuns).catch(() => setRuns([]));
+  }, [run.id]);
+
   const passed = run.validation.filter((c) => c.passed).length;
   const allPass = run.validation.length > 0 && passed === run.validation.length;
+  const options = runs.some((r) => r.id === run.id) ? runs : [run, ...runs];
+
   return (
-    <div className={`border-b print:hidden ${run.isReference ? "border-line bg-surface" : "border-info/25 bg-info-tint"}`}>
-      <div className="tabular mx-auto flex max-w-[1280px] flex-wrap items-center gap-x-6 gap-y-1 px-4 py-2 text-sm sm:px-8">
-        <span className="font-bold text-ink">
-          {run.label}
-        </span>
-        <span className="text-muted">{fmt.int(run.kpis.hospitals)} hospitals</span>
-        <span className="text-muted">{fmt.int(run.kpis.rated)} rated</span>
+    <div className="mx-3 mt-3 rounded-control bg-white/[0.06] p-3">
+      <label htmlFor="run-picker" className="block px-0.5 pb-1 text-[12px] font-semibold text-shell-text">Viewing run</label>
+      <select
+        id="run-picker"
+        value={run.id}
+        onChange={(e) => { const next = options.find((r) => r.id === e.target.value); if (next) setRun(next); }}
+        className="min-h-10 w-full rounded-control border border-white/20 bg-charcoal px-2 text-[14px] font-semibold text-white"
+      >
+        {options.map((r) => (
+          <option key={r.id} value={r.id}>
+            {r.label} ({new Date(r.createdAt).toLocaleDateString([], { dateStyle: "medium" })})
+          </option>
+        ))}
+      </select>
+      <dl className="tabular mt-2.5 grid grid-cols-2 gap-x-3 px-0.5 text-[13px]">
+        <dt className="text-shell-text">Hospitals</dt><dd className="text-right text-white">{fmt.int(run.kpis.hospitals)}</dd>
+        <dt className="text-shell-text">Rated</dt><dd className="text-right text-white">{fmt.int(run.kpis.rated)}</dd>
+      </dl>
+      <div className="mt-2 flex flex-col gap-0.5 px-0.5 text-[13px]">
         {run.isReference ? (
-          <a href="#/validation" className={`inline-flex min-h-6 items-center gap-1 font-bold hover:underline ${allPass ? "text-pass" : "text-abt-red-dark"}`}>
+          <a href="#/validation" className={`inline-flex min-h-6 items-center gap-1 font-semibold hover:underline ${allPass ? "text-[#7ee2a8]" : "text-[#ff8a8e]"}`}>
             {allPass ? <Check aria-hidden className="size-4" strokeWidth={2.5} /> : <X aria-hidden className="size-4" strokeWidth={2.5} />}
             {passed} of {run.validation.length} tables match SAS
           </a>
         ) : (
-          <span className="text-info">Not compared with SAS: no answer key for this input</span>
+          <span className="text-[#9cc7ef]">No SAS answer key for this input</span>
         )}
-        <span className="text-muted">Run {run.id.slice(0, 6)}</span>
-        <span className="text-muted">{new Date(run.createdAt).toLocaleString([], { dateStyle: "medium", timeStyle: "short" })}</span>
-        <a href={api.zipUrl(run.id)} download className="ml-auto inline-flex min-h-8 items-center gap-1.5 font-bold text-ink hover:text-abt-red">
+        <a href={api.zipUrl(run.id)} download className="inline-flex min-h-6 items-center gap-1.5 font-semibold text-white hover:underline">
           <Download aria-hidden className="size-4" /> Download outputs
         </a>
       </div>
     </div>
-  );
-}
-
-function NavLinks({ section }: { section: string }) {
-  return (
-    <ul className="flex whitespace-nowrap">
-      {NAV.map((item) => {
-        const active = section === item.path;
-        return (
-          <li key={item.path} className="flex">
-            <a
-              href={`#/${item.path}`}
-              aria-current={active ? "page" : undefined}
-              className={`flex items-center border-b-[3px] px-3.5 py-3 text-[16px] font-semibold transition-colors duration-150 md:py-0 ${
-                active ? "border-abt-red text-white" : "border-transparent text-shell-text hover:text-white"
-              }`}
-            >
-              {item.label}
-            </a>
-          </li>
-        );
-      })}
-    </ul>
   );
 }

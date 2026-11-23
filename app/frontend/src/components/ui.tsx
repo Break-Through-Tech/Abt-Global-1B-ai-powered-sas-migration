@@ -42,7 +42,7 @@ export function Section({ title, description, action, children, className = "" }
   className?: string;
 }) {
   return (
-    <section className={`border-t border-ink pt-4 ${className}`}>
+    <section className={`min-w-0 border-t border-ink pt-4 ${className}`}>
       <div className="mb-4 flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
         <h2 className="text-xl text-heading">{title}</h2>
         {action}
@@ -60,11 +60,11 @@ export function PageHeader({ title, meta, children, actions }: {
   actions?: ReactNode;
 }) {
   return (
-    <header className="mb-10 flex flex-wrap items-end justify-between gap-x-8 gap-y-4">
-      <div className="max-w-[68ch]">
-        <h1 className="text-[2.5rem] leading-[1.1] tracking-[-0.015em] text-ink">{title}</h1>
-        {meta && <p className="tabular mt-2 text-sm font-semibold text-muted">{meta}</p>}
-        {children && <div className="mt-3 text-[17px] leading-relaxed text-body">{children}</div>}
+    <header className="mb-7 flex flex-wrap items-end justify-between gap-x-8 gap-y-4 border-b border-line pb-5">
+      <div className="max-w-[80ch]">
+        <h1 className="text-[1.75rem] leading-[1.15] tracking-[-0.01em] text-ink">{title}</h1>
+        {meta && <div className="tabular mt-1.5 text-sm font-semibold text-muted">{meta}</div>}
+        {children && <div className="mt-1.5 text-[15px] leading-relaxed text-body">{children}</div>}
       </div>
       {actions && <div className="flex flex-wrap gap-2">{actions}</div>}
     </header>

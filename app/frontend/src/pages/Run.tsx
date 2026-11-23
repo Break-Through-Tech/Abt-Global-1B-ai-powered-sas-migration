@@ -154,7 +154,7 @@ export function RunPage() {
       </div>
 
       <Section className="mt-14" title="Saved runs" description="Every run is saved on the server and kept until you delete it.">
-        <div tabIndex={0} role="region" aria-label="Table, scrolls sideways on small screens" className="overflow-x-auto">
+        <div tabIndex={0} role="region" aria-label="Table, scrolls sideways on small screens" className="relative overflow-x-auto">
           <table className="w-full min-w-[640px] text-[15px]">
             <thead className={tableHead}>
               <tr>

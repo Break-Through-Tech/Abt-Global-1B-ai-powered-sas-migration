@@ -5,7 +5,23 @@ import { api, fmt, type HospitalDetail, type RunSummary } from "../api";
 import { DivergingBar } from "../components/charts";
 import { Notice, PageHeader, Section, Skeleton, Stars, tableHead } from "../components/ui";
 
+/** Full-page view, used on narrow screens and for links opened directly. */
 export function HospitalDetailPage({ run, ccn }: { run: RunSummary; ccn: string }) {
+  return (
+    <>
+      <a href="#/hospitals" className="mb-4 inline-flex min-h-11 items-center gap-1.5 text-[15px] font-bold text-abt-red hover:underline">
+        <ArrowLeft aria-hidden className="size-4" /> All hospitals
+      </a>
+      <HospitalDetailView run={run} ccn={ccn} />
+    </>
+  );
+}
+
+/**
+ * One hospital's rating, eligibility, score build-up and measures. Layout follows its own width
+ * (container queries), so the same view works as a full page or in the side panel beside the list.
+ */
+export function HospitalDetailView({ run, ccn, onClose }: { run: RunSummary; ccn: string; onClose?: () => void }) {
   const [h, setH] = useState<HospitalDetail | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -15,30 +31,34 @@ export function HospitalDetailPage({ run, ccn }: { run: RunSummary; ccn: string 
     api.hospital(run.id, ccn).then(setH).catch((e: Error) => setError(e.message));
   }, [run.id, ccn]);
 
-  const back = (
-    <a href="#/hospitals" className="mb-6 inline-flex min-h-11 items-center gap-1.5 text-[15px] font-bold text-abt-red hover:underline">
-      <ArrowLeft aria-hidden className="size-4" /> All hospitals
-    </a>
+  if (error) return <Notice tone="error" title={`No hospital with CCN ${ccn} in this run`}>{error}</Notice>;
+  if (!h) return <div aria-busy="true"><Skeleton className="mb-6 h-9 w-64" /><Skeleton className="h-96" /></div>;
+
+  const meta = (
+    <span className="flex flex-wrap gap-x-6 gap-y-1">
+      <span>CCN {h.id}</span>
+      <span>{h.state}</span>
+      {h.peer && <span>Peer group: {h.peer} measure groups</span>}
+    </span>
   );
 
-  if (error) return <>{back}<Notice tone="error" title={`No hospital with CCN ${ccn} in this run`}>{error}</Notice></>;
-  if (!h) return <>{back}<Skeleton className="mb-6 h-11 w-80" /><Skeleton className="h-96" /></>;
-
   return (
-    <>
-      {back}
-      <PageHeader
-        title={`Hospital ${h.id}`}
-        meta={
-          <span className="flex flex-wrap gap-x-6 gap-y-1">
-            <span>CCN {h.id}</span>
-            <span>{h.state}</span>
-            {h.peer && <span>Peer group: {h.peer} measure groups</span>}
-          </span>
-        }
-      />
+    <div className="@container">
+      {onClose ? (
+        <header className="mb-6 flex items-start justify-between gap-4 border-b border-line pb-4">
+          <div>
+            <h2 className="text-[1.5rem] leading-tight text-ink">Hospital {h.id}</h2>
+            <div className="tabular mt-1 text-sm font-semibold text-muted">{meta}</div>
+          </div>
+          <button onClick={onClose} aria-label="Close hospital details" className="inline-flex size-11 shrink-0 items-center justify-center text-ink hover:bg-surface">
+            <X aria-hidden className="size-5" />
+          </button>
+        </header>
+      ) : (
+        <PageHeader title={`Hospital ${h.id}`} meta={meta} />
+      )}
 
-      <div className="grid gap-x-16 gap-y-12 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
+      <div className="grid gap-x-12 gap-y-10 @3xl:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
         <Section title="Overall rating">
           <div className="flex items-center gap-4">
             <span className="tabular text-[4rem] leading-none font-extrabold text-ink">{h.star ?? "–"}</span>
@@ -63,11 +83,11 @@ export function HospitalDetailPage({ run, ccn }: { run: RunSummary; ccn: string 
       </div>
 
       <Section
-        className="mt-14"
+        className="mt-12"
         title="How the summary score is built"
         description={<>Each <Term id="group-score">group score</Term> is multiplied by its weight. When a group is missing, its weight is shared among the groups that remain.</>}
       >
-        <div tabIndex={0} role="region" aria-label="Table, scrolls sideways on small screens" className="overflow-x-auto">
+        <div tabIndex={0} role="region" aria-label="Table, scrolls sideways on small screens" className="relative overflow-x-auto">
           <table className="w-full min-w-[720px] text-[15px]">
             <thead className={tableHead}>
               <tr>
@@ -105,7 +125,7 @@ export function HospitalDetailPage({ run, ccn }: { run: RunSummary; ccn: string 
         </div>
       </Section>
 
-      <Section className="mt-14" title="Measures" description={<><Term id="standardized">Standardized scores</Term> for every <Term id="measure">measure</Term>. Higher is better for all of them.</>}>
+      <Section className="mt-12" title="Measures" description={<><Term id="standardized">Standardized scores</Term> for every <Term id="measure">measure</Term>. Higher is better for all of them.</>}>
         <div className="divide-y divide-line-soft border-y border-line-soft">
           {h.groups.map((g) => {
             const reported = g.measures.filter((m) => m.value !== null).length;
@@ -128,7 +148,7 @@ export function HospitalDetailPage({ run, ccn }: { run: RunSummary; ccn: string 
                           <span className="tabular ml-2 text-[13px] text-muted">{m.code}</span>
                           {!m.included && <span className="ml-2 text-[13px] text-muted">(dropped for low volume)</span>}
                         </th>
-                        <td className="hidden w-[220px] py-2 sm:table-cell"><DivergingBar value={m.value} range={3} label={m.label} /></td>
+                        <td className="hidden w-[200px] py-2 @xl:table-cell"><DivergingBar value={m.value} range={3} label={m.label} /></td>
                         <td className={`tabular w-28 py-2 pl-4 text-right ${m.value === null ? "text-sm text-muted" : "font-semibold text-ink"}`}>
                           {m.value === null ? "Not reported" : fmt.score(m.value, 2)}
                         </td>
@@ -141,7 +161,7 @@ export function HospitalDetailPage({ run, ccn }: { run: RunSummary; ccn: string 
           })}
         </div>
       </Section>
-    </>
+    </div>
   );
 }
 

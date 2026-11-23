@@ -43,7 +43,7 @@ export function ReportPage({ run }: { run: RunSummary }) {
       </div>
 
       <article className="mx-auto max-w-[8.5in] bg-white text-[15px] text-body shadow-[0_2px_12px_rgba(0,0,0,0.10)] ring-1 ring-line-soft print:max-w-none print:text-[12px] print:shadow-none print:ring-0">
-        <div className="px-[0.75in] py-[0.7in] print:p-0">
+        <div className="px-5 py-8 sm:px-[0.75in] sm:py-[0.7in] print:p-0">
           <header className="flex items-start justify-between gap-6 border-b-2 border-ink pb-5">
             <div>
               <p className="text-[15px] font-bold text-abt-red">Overall Hospital Quality Star Rating</p>
@@ -108,7 +108,8 @@ export function ReportPage({ run }: { run: RunSummary }) {
           </div>
 
           <Block title="Peer groups" note="Stars are assigned separately within each peer group.">
-            <table className="w-full">
+            <div tabIndex={0} role="region" aria-label="Table, scrolls sideways on small screens" className="relative overflow-x-auto print:overflow-visible">
+            <table className="w-full min-w-[520px] print:min-w-0">
               <thead className={tableHead}>
                 <tr>
                   <th scope="col" className="px-2 py-1.5">Peer group</th>
@@ -132,6 +133,7 @@ export function ReportPage({ run }: { run: RunSummary }) {
                 })}
               </tbody>
             </table>
+            </div>
           </Block>
 
           <Block title="Average rating by state" className="print-break" note="State comes from the first two digits of the CCN. States with fewer than 5 rated hospitals are outlined and left uncolored.">
@@ -141,7 +143,7 @@ export function ReportPage({ run }: { run: RunSummary }) {
           </Block>
 
           <Block title="State detail" className="print-break">
-            <div className="grid gap-x-6 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] print:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+            <div tabIndex={0} role="region" aria-label="Table, scrolls sideways on small screens" className="relative grid gap-x-6 overflow-x-auto print:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] print:overflow-visible">
               <StateTable dense states={stateRows.slice(0, half)} />
               <StateTable dense states={stateRows.slice(half)} />
             </div>
@@ -149,7 +151,8 @@ export function ReportPage({ run }: { run: RunSummary }) {
 
           {run.isReference && (
             <Block title="Parity with the SAS package" className="print-break" note="Each table is compared value by value with the SAS output datasets at full precision, matched on CCN. Tolerance 0.000001.">
-              <table className="w-full">
+              <div tabIndex={0} role="region" aria-label="Table, scrolls sideways on small screens" className="relative overflow-x-auto print:overflow-visible">
+              <table className="w-full min-w-[560px] print:min-w-0">
                 <thead className={tableHead}>
                   <tr>
                     <th scope="col" className="px-2 py-1.5">Output table</th>
@@ -171,6 +174,7 @@ export function ReportPage({ run }: { run: RunSummary }) {
                   ))}
                 </tbody>
               </table>
+              </div>
             </Block>
           )}
 

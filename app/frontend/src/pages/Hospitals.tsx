@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { api, fmt, GROUP_LABELS, type GroupKey, type HospitalRow, type RunSummary } from "../api";
 import { Notice, PageHeader, Skeleton, StarLabel, Stars, buttonClass, tableHead } from "../components/ui";
 import { hashQuery, navigate } from "../state";
+import { HospitalDetailView } from "./HospitalDetail";
 import { STATE_NAMES } from "../components/StateMap";
 
 type SortKey = "id" | "state" | "star" | "summary" | "peer" | GroupKey;
@@ -17,7 +18,8 @@ const SHORT: Record<GroupKey, string> = {
   process: "Process",
 };
 
-export function HospitalsPage({ run }: { run: RunSummary }) {
+export function HospitalsPage({ run, selected = null }: { run: RunSummary; selected?: string | null }) {
+  const panel = selected !== null;
   const [rows, setRows] = useState<HospitalRow[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [query, setQuery] = useState("");
@@ -105,9 +107,11 @@ export function HospitalsPage({ run }: { run: RunSummary }) {
         Find a hospital by its CMS Certification Number (<Term id="ccn">CCN</Term>), or narrow the list. Open any row to see how its rating was built.
       </PageHeader>
 
+      <div className={panel ? "grid items-start gap-x-8 xl:grid-cols-[minmax(0,1fr)_minmax(440px,0.85fr)]" : undefined}>
+      <div className="min-w-0">
       <div role="search" aria-label="Filter hospitals" className="mb-6 rounded-control bg-surface p-4">
         <div className="flex flex-wrap items-end gap-4">
-          <div className="min-w-56 flex-1">
+          <div className="min-w-48 flex-1">
             <label htmlFor="q" className="mb-1 block text-sm font-semibold text-heading">CCN</label>
             <div className="relative">
               <Search aria-hidden className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted" />
@@ -168,9 +172,9 @@ export function HospitalsPage({ run }: { run: RunSummary }) {
           <p aria-live="polite" className="text-muted">
             <span className="tabular font-bold text-ink">{fmt.int(filtered.length)}</span> {filtered.length === 1 ? "hospital" : "hospitals"}
           </p>
-          <p className="hidden text-muted sm:block"><Term id="group-score">Group scores</Term> are <Term id="standardized">standardized</Term>: 0 is the national mean, higher is better</p>
+          <p className={`hidden text-muted ${panel ? "" : "sm:block"}`}><Term id="group-score">Group scores</Term> are <Term id="standardized">standardized</Term>: 0 is the national mean, higher is better</p>
         </div>
-        <div tabIndex={0} role="region" aria-label="Table, scrolls sideways on small screens" className="overflow-x-auto">
+        <div tabIndex={0} role="region" aria-label="Table, scrolls sideways on small screens" className="relative overflow-x-auto">
           <table className="w-full text-sm">
             <thead className={tableHead}>
               <tr>
@@ -179,21 +183,26 @@ export function HospitalsPage({ run }: { run: RunSummary }) {
                 {header("star", "Rating")}
                 {header("summary", "Summary", "right")}
                 {header("peer", "Peer", "right", "Number of measure groups")}
-                {GROUP_KEYS.map((k) => header(k, SHORT[k], "right", GROUP_LABELS[k]))}
+                {!panel && GROUP_KEYS.map((k) => header(k, SHORT[k], "right", GROUP_LABELS[k]))}
               </tr>
             </thead>
             <tbody className="divide-y divide-line-soft">
               {!rows && Array.from({ length: 8 }, (_, i) => (
-                <tr key={i}><td colSpan={10} className="px-3 py-2"><Skeleton className="h-6" /></td></tr>
+                <tr key={i}><td colSpan={panel ? 5 : 10} className="px-3 py-2"><Skeleton className="h-6" /></td></tr>
               ))}
               {visible.map((r) => (
                 <tr
                   key={r.id}
                   onClick={() => navigate(`/hospitals/${r.id}`)}
-                  className="cursor-pointer hover:bg-surface"
+                  className={`cursor-pointer ${r.id === selected ? "bg-abt-red-tint" : "hover:bg-surface"}`}
                 >
                   <td className="px-3 py-2.5">
-                    <a href={`#/hospitals/${r.id}`} className="tabular font-bold text-ink underline decoration-line underline-offset-4 hover:text-abt-red hover:decoration-abt-red" onClick={(e) => e.stopPropagation()}>
+                    <a
+                      href={`#/hospitals/${r.id}`}
+                      aria-current={r.id === selected ? "true" : undefined}
+                      className="tabular font-bold text-ink underline decoration-line underline-offset-4 hover:text-abt-red hover:decoration-abt-red"
+                      onClick={(e) => e.stopPropagation()}
+                    >
                       {r.id}
                     </a>
                   </td>
@@ -201,7 +210,7 @@ export function HospitalsPage({ run }: { run: RunSummary }) {
                   <td className="px-3 py-2.5"><Stars value={r.star} size={15} /></td>
                   <td className="tabular px-3 py-2.5 text-right font-bold text-ink">{fmt.score(r.summary)}</td>
                   <td className="tabular px-3 py-2.5 text-right">{r.peer ?? "–"}</td>
-                  {GROUP_KEYS.map((k) => (
+                  {!panel && GROUP_KEYS.map((k) => (
                     <td key={k} className={`tabular px-3 py-2.5 text-right ${fmt.score(r[k], 2).startsWith("−") ? "text-abt-red-dark" : ""}`}>
                       {fmt.score(r[k], 2)}
                     </td>
@@ -209,7 +218,7 @@ export function HospitalsPage({ run }: { run: RunSummary }) {
                 </tr>
               ))}
               {rows && visible.length === 0 && (
-                <tr><td colSpan={10} className="px-3 py-10 text-center text-muted">No hospitals match these filters. Clear a filter to widen the list.</td></tr>
+                <tr><td colSpan={panel ? 5 : 10} className="px-3 py-10 text-center text-muted">No hospitals match these filters. Clear a filter to widen the list.</td></tr>
               )}
             </tbody>
           </table>
@@ -225,6 +234,17 @@ export function HospitalsPage({ run }: { run: RunSummary }) {
             </button>
           </div>
         </nav>
+      </div>
+      </div>
+
+      {panel && (
+        <aside
+          aria-label={`Hospital ${selected} details`}
+          className="sticky top-6 max-h-[calc(100vh-3rem)] overflow-y-auto border-l border-line pl-8"
+        >
+          <HospitalDetailView run={run} ccn={selected} onClose={() => navigate("/hospitals")} />
+        </aside>
+      )}
       </div>
     </>
   );

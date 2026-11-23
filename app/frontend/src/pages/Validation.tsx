@@ -47,7 +47,7 @@ export function ValidationPage({ run }: { run: RunSummary }) {
           </div>
 
           <Section title="Table by table">
-            <div tabIndex={0} role="region" aria-label="Table, scrolls sideways on small screens" className="overflow-x-auto">
+            <div tabIndex={0} role="region" aria-label="Table, scrolls sideways on small screens" className="relative overflow-x-auto">
               <table className="w-full min-w-[760px] text-[15px]">
                 <thead className={tableHead}>
                   <tr>

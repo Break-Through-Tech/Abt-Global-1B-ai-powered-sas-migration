@@ -28,12 +28,16 @@ The Vite dev server (http://localhost:5173) forwards `/api` calls to the backend
 
 ## What it does
 
+The app uses a standard app layout: a sidebar with navigation and a run picker (which saved run every
+screen shows, its SAS status and its downloads), and the work area beside it. On phones and tablets the
+sidebar opens from a Menu button.
+
 | Page | Purpose |
 |---|---|
-| Ratings | Star distribution, national averages, a state map, and ratings by peer group |
+| Ratings | Dashboard for one run: state map, rating distribution, national averages, peer groups, state rankings. Selecting a state filters the distribution |
 | Run pipeline | Run on the July 2025 reference data or upload a new `.csv` / `.sas7bdat` measure file, name it, and manage saved runs |
 | Compare | Two saved runs side by side: rating counts, a movement matrix, and every hospital that changed |
-| Hospitals | Search by CCN, filter by state, star and peer group, sort any column |
+| Hospitals | Search by CCN, filter by state, star and peer group, sort any column. On wide screens a selected hospital opens beside the list |
 | Hospital detail | Eligibility rules, how each group score feeds the summary score, every measure |
 | SAS parity | Cell-by-cell comparison of all nine output tables with the SAS `.sas7bdat` datasets |
 | Methodology | Each stage, the SAS program it replaces, and the Python module that does the work |

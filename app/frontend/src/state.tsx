@@ -42,8 +42,12 @@ export function useRoute(): string[] {
   const [route, setRoute] = useState(read);
   useEffect(() => {
     const onChange = () => {
-      setRoute(read());
-      window.scrollTo({ top: 0 });
+      const next = read();
+      // Scroll to the top only when moving to another section, so picking a row keeps your place.
+      setRoute((prev) => {
+        if (prev[0] !== next[0]) window.scrollTo({ top: 0 });
+        return next;
+      });
     };
     window.addEventListener("hashchange", onChange);
     return () => window.removeEventListener("hashchange", onChange);
